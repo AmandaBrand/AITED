@@ -1,2 +1,6 @@
+venv
+.DS_Store
+*.py[co]
 *.pyc
-.idea/workspace.xml
+__pycache__
+trash

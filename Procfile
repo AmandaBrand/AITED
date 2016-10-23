@@ -1,1 +1,1 @@
-web: python app/views2.py
+web: gunicorn app.views2:app

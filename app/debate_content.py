@@ -1,4 +1,4 @@
-import urllib2
+from urllib.request import urlopen
 import re
 from bs4 import BeautifulSoup
 from random import choice
@@ -13,7 +13,7 @@ def stripTags(data):
 def getQuery(topic, keywords, debug):    
     site = "http://www.nytimes.com/roomfordebate/"
     query = "%s %s site:%s" % (topic, keywords, site)
-    if debug: print "Query: %s\n" % query
+    if debug: print( "Query: %s\n" % query)
     return query
 
 # Get a random debate url
@@ -27,11 +27,11 @@ def getDebateURLRoot(query, debug):
     except:
         # get debate root
         debate_url_root = '/'.join(debate_url_root.split('/')[:-1]) + '/'
-    if debug: print"Debate url root: %s\n" % debate_url_root
+    if debug: print("Debate url root: %s\n" % debate_url_root)
     return debate_url_root
 
 def getDebateURL(query, debate_url_root, debug):
-    html = urllib2.urlopen(debate_url_root).read()
+    html = urlopen(debate_url_root).read()
     soup = BeautifulSoup(html)
     try:
         debate_url = "http://www.nytimes.com" + \
@@ -39,12 +39,12 @@ def getDebateURL(query, debate_url_root, debug):
     except:
         debate_url_root = getDebateURLRoot(query, debug)
         debate_url = getDebateURL(query, debate_url_root, debug)
-    if debug: print "Debate url: %s\n" % debate_url
+    if debug: print( "Debate url: %s\n" % debate_url)
     return debate_url
 
 # Get html from debate_url and make a soup
 def getSoup(debate_url):
-    html = urllib2.urlopen(debate_url).read()
+    html = urlopen(debate_url).read()
     soup = BeautifulSoup(html)
     return soup
 
@@ -170,14 +170,14 @@ def solution(debate):
 
 def getSpeechSummary(debate, speaker_num):
     speaker = debate.getSpeaker(speaker_num)
-    print "-"*60
-    print "Speaker %d's Title: %s \n" % (speaker_num, speaker.title)
-    print "Quote: %s - %s \n" % (speaker.quote, debate.authorList[speaker_num])
-    print "Main argument: %s \n" % speaker.getPara(0)
-    print "Concluding statement: %s \n" % speaker.getParaLine(-1, -1)
-    #print "Paragraphs:"
-    #for para in speaker.paras: print para,'\n'
-    print "-"*60
+    print( "-"*60)
+    print( "Speaker %d's Title: %s \n" % (speaker_num, speaker.title))
+    print( "Quote: %s - %s \n" % (speaker.quote, debate.authorList[speaker_num]))
+    print( "Main argument: %s \n" % speaker.getPara(0))
+    print( "Concluding statement: %s \n" % speaker.getParaLine(-1, -1))
+    #print( "Paragraphs:")
+    #for para in speaker.paras: print( para,'\n')
+    print( "-"*60)
 
 def getSpeakerPara(debate, speaker_num, para_num):
     speaker = debate.getSpeaker(speaker_num)
@@ -190,14 +190,14 @@ def getSpeakerPara(debate, speaker_num, para_num):
 #topic = 'education'
 #keywords = 'school waste time?'
 #debate = getDebate(topic, keywords, debug=True)
-#print "Debate Title: %s \n" % debate.debateTitle
+#print( "Debate Title: %s \n" % debate.debateTitle)
 
 
 # -------------------- Usage 1 - Use these functions -----------------
 """
-print "Importance: %s \n" % importance(debate)
-print "Problem: %s \n" % problem(debate)
-print "Solution: %s \n" % solution(debate)
+print( "Importance: %s \n" % importance(debate))
+print( "Problem: %s \n" % problem(debate))
+print( "Solution: %s \n" % solution(debate))
 """
 
 
@@ -208,4 +208,4 @@ print "Solution: %s \n" % solution(debate)
 
 # ------------ Usage 3 - Get any para from any speaker  ---------------
 #speaker_num, para_num = 0, 1
-#print "Speaker %d, Para %d: %s" % (speaker_num, para_num, getSpeakerPara(debate, speaker_num, para_num))
+#print( "Speaker %d, Para %d: %s" % (speaker_num, para_num, getSpeakerPara(debate, speaker_num, para_num)))

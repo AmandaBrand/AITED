@@ -1,16 +1,8 @@
+from app import app
 import os, random, sys
-from flask import Flask, render_template, request
-# from app import app
-import TED_Talk
+from flask import Flask, render_template, request, redirect, url_for
+from .TED_Talk import *
 # from forms import topicsForm
-from flask import Flask, redirect, url_for
-
-reload(sys)
-sys.setdefaultencoding("utf-8")
-
-app = Flask(__name__)
-app.secret_key = 'F34TF$($e34D'
-
 
 @app.route('/')
 def form():
@@ -22,7 +14,7 @@ def results():
     # if request.method == 'POST':
     topic = ""
     topic = request.form['topics']
-    print topic
+    print(topic)
     others = ['Arts', 'Movies', 'Music', 'People', 'Society', 'TV', 'News']
 
     if topic == 'Comedy': topic == 'Funny'
@@ -60,10 +52,5 @@ def results():
                             impact = impact,
                             quote = quote
                             )
-
-if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))
-    app.run(debug=True, host='0.0.0.0', port=port)
-
 
 

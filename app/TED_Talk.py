@@ -1,17 +1,18 @@
 # -*- coding: utf8 -*-
 # scraping
-import urllib2
+from urllib.request import Request, urlopen
+from urllib.error import HTTPError
 from bs4 import BeautifulSoup
 from google import search
 from time import sleep
 
 # TED talk
-import thesis2, quoteTest, debate_content
+from . import thesis2, quoteTest, debate_content
 
 # NLP
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
-from alchemyapi import AlchemyAPI
+from .alchemyapi import AlchemyAPI
 
 # timeout
 import signal
@@ -64,7 +65,7 @@ class Thesis:
         attr_str = ''.join(['\n'+x+':\n%s\n' for x in attr])
         try:
             s += attr_str % (self.title, self.thesis, self.keywords, self.url)
-        except: print self.title, self.thesis, self.keywords, self.url
+        except: print(self.title, self.thesis, self.keywords, self.url)
         return s
 
 
@@ -92,14 +93,14 @@ class Scraper:
         sleep(wt) # be polite!
         hdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',}
-        req = urllib2.Request(url, headers=hdr)
+        req = Request(url, headers=hdr)
         html = None
         try:
-            html = urllib2.urlopen(req).read()
-            if debug: print "URL tried: %s" % url
-        except urllib2.HTTPError, e:
+            html = urlopen(req).read()
+            if debug: print( "URL tried: %s" % url)
+        except (HTTPError, e):
             self.urls_broken.append(url)
-            print "URL broke: %s" % url
+            print( "URL broke: %s" % url)
         return html
 
     def find_tags(self, html, tag_name, class_name=False):
@@ -115,7 +116,7 @@ class Scraper:
 
         # check for poor results
         if urls and 'www.procon.org/debate-topics.php' in urls[0]:
-            print "%s Poor Results %s" % ("="*25, "="*25)
+            print( "%s Poor Results %s" % ("="*25, "="*25))
             return None
         
         # filter urls by type of link
@@ -128,7 +129,7 @@ class Scraper:
         @contextmanager
         def time_limit(seconds):
             def signal_handler(signum, frame):
-                raise self.TimeoutException, "Timed out!"
+                raise Exception(self.TimeoutException, "Timed out!")
             signal.signal(signal.SIGALRM, signal_handler)
             signal.alarm(seconds)
             try:
@@ -138,7 +139,7 @@ class Scraper:
         try:
             with time_limit(limit):
                 return fun(*args)
-        except self.TimeoutException, msg:
+        except (self.TimeoutException, msg):
             return None
 
     def run(self):
@@ -148,7 +149,7 @@ class Scraper:
             tags = self.find_tags(html, 'h3', 'r')
             urls = self.google_urls(tags)            
         else: # use fallback option
-            print "%s%s%s\n" % ("-"*25, "Cannot open html", "-"*25)
+            print( "%s%s%s\n" % ("-"*25, "Cannot open html", "-"*25))
             query = "%s %s" % (self.section_keywords, self.thesis_obj.keywords)
             result_urls = search(query, stop=30, pause=2.0)
             urls = [link for (num, link) in list(enumerate(result_urls))]
@@ -191,9 +192,9 @@ class TextFinder:
     def duplicates(self, para, talk):
         for i in range(len(talk)):
           if len(self.filter_common_words(para, talk[i].split()))>=50:
-               print "Wrong para "
-               print para
-               print talk
+               print( "Wrong para ")
+               print( para)
+               print( talk)
                return False
         return True                  
          
@@ -227,10 +228,10 @@ class TextFinder:
                 label, score = category['label'], category['score'][:4]
                 root_label = label.split('/')[1]
                 roots.append(str(root_label))
-                if self.debug: print "Root: %s \t Score: %s" % (label.ljust(40), score)
-        else: print 'Error in concept tagging call: ', response['statusInfo']
+                if self.debug: print( "Root: %s \t Score: %s" % (label.ljust(40), score))
+        else: print( 'Error in concept tagging call: ', response['statusInfo'])
         roots = list(set(roots)) # remove duplicates
-        if self.debug: print 'Category roots', roots
+        if self.debug: print( 'Category roots', roots)
         return roots
 
     def removeNonAscii(self, s):
@@ -250,7 +251,7 @@ class TextFinder:
             html = scraper.get_html(url, self.debug)
             #html = scraper.timeout(scraper.get_html, scraper.wait[1]+2, url, self.debug)
             if not html:
-                print "%s%s%s" % ("-"*20, "html timed out", "-"*20)
+                print( "%s%s%s" % ("-"*20, "html timed out", "-"*20))
                 continue
             paras = scraper.find_tags(html, 'p')
 
@@ -308,7 +309,7 @@ def run(topic, debug):
     # generate thesis
     my_thesis = Thesis(topic, source="debate.org")
     talk = [my_thesis.title, my_thesis.thesis]
-    if debug: print my_thesis
+    if debug: print( my_thesis)
 
 
     # generate sections
@@ -316,14 +317,14 @@ def run(topic, debug):
         # make a scraper that returns url links
         section = Scraper(my_thesis, section_name, debug=False)
         if not section.run(): return run(topic, debug)
-        if debug: print section
+        if debug: print( section)
 
         # find the text from the urls with approriate filters
         text_find = TextFinder(section, talk, title_match=2, section_match=0, debug=debug)
         talk.append(text_find.run())
 
         # printing
-        if debug: print text_find
+        if debug: print( text_find)
     
     # add quote
     try:
@@ -336,10 +337,10 @@ def run(topic, debug):
     # add connectives
     talk = connectives(talk, author)
     
-    # print talk
-    print "\n\n%s%s%s" % ("="*25, "Final Talk", "="*25)
+    # print( talk)
+    print( "\n\n%s%s%s" % ("="*25, "Final Talk", "="*25))
     for section in talk:
-        print "%s\n" % section
+        print( "%s\n" % section)
         
     
     # write to file

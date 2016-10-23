@@ -3,11 +3,11 @@ from nltk.corpus import stopwords
 from google import search
 import json as m_json
 import requests, string, re
-import urllib2
-import urllib
-import HTMLParser
-import thesis2
-from alchemyapi import AlchemyAPI
+from urllib.request import Request, urlopen
+from urllib.parse import urlencode
+import html
+from . import thesis2
+from .alchemyapi import AlchemyAPI
 
 
 def gen_quotes(category, title):
@@ -33,8 +33,8 @@ def gen_quotes(category, title):
     while web_url == "":
         keywords_str = ' '.join(keywords)
         query1 = category + " " + keywords_str + " site:brainyquote.com"
-        query2 = urllib.urlencode({'q': query1})
-        response = urllib.urlopen('http://ajax.googleapis.com/ajax/services/search/web?v=1.0&' + query2).read()
+        query2 = urlencode({'q': query1})
+        response = urlopen('http://ajax.googleapis.com/ajax/services/search/web?v=1.0&' + query2).read()
         json = m_json.loads(response)
         '''in case we hit the limit of searching'''
         try:
@@ -46,12 +46,11 @@ def gen_quotes(category, title):
                 #print web_url
                 contents = results[0]['content'].split("...")
                 contents = filter(None, contents)
-                h = HTMLParser.HTMLParser()
                 if len(contents) == 1:
                     index = 0
                 else:
                     index = 1
-                target_content = h.unescape(contents[index])
+                target_content = html.unescape(contents[index])
                 target_content = BeautifulSoup(target_content).text
                 target_content = " ".join(target_content.split())
             except Exception:
@@ -113,8 +112,8 @@ def get_quote(web_url, target_content):
         'Accept-Language': 'en-US,en;q=0.8',
         'Connection': 'keep-alive'}
     # try:
-    req = urllib2.Request(web_url, headers=hdr)
-    response = urllib2.urlopen(req)
+    req = Request(web_url, headers=hdr)
+    response = urlopen(req)
     line = response.readline()
     data = ''
 
@@ -142,13 +141,13 @@ def get_quote(web_url, target_content):
 def main():
     category = 'education'
     title, link, category = thesis2.genTopic(category)
-    print "%s %s %s" % ("=" * 30, "title", "=" * 30)
-    print title
-    print "%s %s %s" % ("=" * 30, "quote", "=" * 30)
-    # print "title: ", title
+    print( "%s %s %s" % ("=" * 30, "title", "=" * 30))
+    print( title)
+    print( "%s %s %s" % ("=" * 30, "quote", "=" * 30))
+    # print( "title: ", title)
     quote, author = gen_quotes(category, title)
-    print '"' + quote + '"'
-    print " - " + author
+    print( '"' + quote + '"')
+    print( " - " + author)
 
 
 

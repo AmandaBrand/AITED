@@ -261,8 +261,8 @@ def main():
     # print "%s %s %s" % ("="*30, "support", "="*30)
     # print support
     #
-    print "%s %s %s" % ("="*30, "intro", "="*30)
-    print introduction(title, one, support)
+    print ("%s %s %s" % ("="*30, "intro", "="*30))
+    print (introduction(title, one, support))
 
 if __name__ == "__main__":
     main()
