@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- files to be loaded first -->
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <link rel="stylesheet" href="Plugins/Bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="Plugins/Bootstrap/css/bootstrap-theme.min.css">
+        <link href='http://fonts.googleapis.com/css?family=Gloria+Hallelujah|Open+Sans:400,300,700' rel='stylesheet' type='text/css'>
+        <script src="Plugins/Bootstrap/js/bootstrap.min.js"></script>
+
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+        <title>TED 2.0</title>
+        <link href="style.css" rel="stylesheet" />
+    </head>
+
+    <body class="fancy">
+        <!-- HEADER -->
+        <div class="header">TED <span class="cursive">2.0</span></div>
+        <div class="sub-header">ideas worth automating</div>
+
+        <!-- FORM -->
+        <form class="form-horizontal" role="form">
+            
+            <!-- TOPICS -->
+        	<select class="form-control" id="topics" name="topics">
+                <option>Select a topic</option>
+                <option value='Comedy'>Comedy</option>
+                <option value='Education'>Education</option>
+                <option value='Entertainment'>Entertainment</option>
+                <option value='Environment'>Environment</option>
+                <option value='Fashion'>Fashion</option>
+                <option value='Health'>Health</option>
+                <option value='Politics'>Politics</option>
+                <option value='Religion'>Religion</option>
+                <option value='Science'>Science</option>
+                <option value='Sports'>Sports</option>
+                <option value='Technology'>Technology</option>
+                <option value='Transportation'>Transportation</option>
+            </select>
+
+            <!-- Keywords 
+            <select class="form-control" id="keywords">
+                <option>Select a keyword</option>
+            </select>-->
+
+            <!-- BUTTONS -->
+            <div class="form-group">
+                <div class="col-sm-offset-2">
+                  <button type="submit" class="btn btn-default">Generate</button>
+                </div>
+            </div>
+        </form>
+
+    </body>
+
+</html>
